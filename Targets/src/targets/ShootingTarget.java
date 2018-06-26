@@ -170,6 +170,7 @@ public class ShootingTarget extends Target {
         Text scoredPointsText = new Text(e.getSceneX(), e.getSceneY(), "" + totalPointsScored);
         scoredPointsText.setScaleX(6);
         scoredPointsText.setScaleY(6);
+        scoredPointsText.setMouseTransparent(true);
         Main.getRoot().getChildren().addAll(scoredPointsText);
 
         ScaleTransition scaleTransition = new ScaleTransition(Duration.seconds(3), scoredPointsText);

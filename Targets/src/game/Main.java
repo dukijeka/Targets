@@ -19,6 +19,8 @@ import targets.ShootingTarget;
 import targets.Target;
 
 
+import java.awt.*;
+import java.awt.event.InputEvent;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -102,7 +104,11 @@ public class Main extends Application {
         scene.setOnMouseDragOver(e -> updateAmmo());
         scene.setOnKeyPressed(e -> onKeyPressed(e));
         gunpoint.setMouseTransparent(true);
-        scene.setCursor(Cursor.NONE);
+        Robot robot = new Robot();
+        robot.mouseMove((int) (scene.getX() + scene.getWidth() / 2),
+                (int) (scene.getY() + scene.getHeight() / 2)
+        );
+        //scene.setCursor(Cursor.NONE);
 
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -110,36 +116,82 @@ public class Main extends Application {
     }
 
     private void onKeyPressed(KeyEvent e) {
+        Robot robot = null;
         switch (e.getCode()) {
             case UP:
                 //System.out.printf("up");
 
                 gunpoint.setTranslateY(gunpoint.getTranslateY() - GUNPOINT_MOVE_DISTANCE);
+                try {
+                    robot = new Robot();
+                    //robot.mouseMove(500, 500);
+                    robot.mouseMove((int) MouseInfo.getPointerInfo().getLocation().getX(),
+                            (int) MouseInfo.getPointerInfo().getLocation().getY() - GUNPOINT_MOVE_DISTANCE);
+                } catch (AWTException e1) {
+                    e1.printStackTrace();
+                }
 
                 break;
             case DOWN:
 
                 gunpoint.setTranslateY(gunpoint.getTranslateY() + GUNPOINT_MOVE_DISTANCE);
-
+                robot = null;
+                try {
+                    robot = new Robot();
+                } catch (AWTException e1) {
+                    e1.printStackTrace();
+                }
+                robot.mouseMove((int) MouseInfo.getPointerInfo().getLocation().getX(),
+                        (int) MouseInfo.getPointerInfo().getLocation().getY() + GUNPOINT_MOVE_DISTANCE);
                 break;
             case LEFT:
 
                 gunpoint.setTranslateX(gunpoint.getTranslateX() - GUNPOINT_MOVE_DISTANCE);
 
+                try {
+                    robot = new Robot();
+                    robot.mouseMove((int) MouseInfo.getPointerInfo().getLocation().getX()- GUNPOINT_MOVE_DISTANCE,
+                            (int) MouseInfo.getPointerInfo().getLocation().getY() );
+                } catch (AWTException e1) {
+                    e1.printStackTrace();
+                }
+
                 break;
             case RIGHT:
 
                 gunpoint.setTranslateX(gunpoint.getTranslateX() + GUNPOINT_MOVE_DISTANCE);
+
+                try {
+                    robot = new Robot();
+                    robot.mouseMove((int) MouseInfo.getPointerInfo().getLocation().getX() + GUNPOINT_MOVE_DISTANCE,
+                            (int) MouseInfo.getPointerInfo().getLocation().getY() );
+                } catch (AWTException e1) {
+                    e1.printStackTrace();
+                }
+
                 break;
             case SPACE:
                 for (Target target : targets) {
                     if (gunpoint.getBoundsInParent().intersects(target.getBoundsInParent())) {
-                        target.getOnMousePressed().handle(
-                                new MouseEvent(MouseEvent.MOUSE_PRESSED, gunpoint.getTranslateX(),
-                                        gunpoint.getTranslateY(), 0, 0, MouseButton.PRIMARY,
-                                        1, false, false, false, false, true, false, false, true,
-                                        false, true, null)
-                                );
+//                        target.getOnMousePressed().handle(
+//                                new MouseEvent(MouseEvent.MOUSE_PRESSED, gunpoint.getTranslateX(),
+//                                        gunpoint.getTranslateY(), 0, 0, MouseButton.PRIMARY,
+//                                        1, false, false, false, false, true, false, false, true,
+//                                        false, true, null)
+//                                );
+                        try {
+                            robot = new Robot();
+//                            robot.mouseMove(
+//                                    (int) (gunpoint.localToScreen(gunpoint.getBoundsInLocal()).getMaxX()
+//                                            - gunpoint.localToScreen(gunpoint.getBoundsInLocal()).getMinX()) / 2,
+//                                    (int) (gunpoint.localToScreen(gunpoint.getBoundsInLocal()).getMaxY()
+//                                            - gunpoint.localToScreen(gunpoint.getBoundsInLocal()).getMinY()) / 2);
+                            robot.mousePress(InputEvent.BUTTON1_MASK);
+                            robot.mouseRelease(InputEvent.BUTTON1_MASK);
+                        } catch (AWTException e1) {
+                            e1.printStackTrace();
+                        }
+
                         break;
                     }
                 }
